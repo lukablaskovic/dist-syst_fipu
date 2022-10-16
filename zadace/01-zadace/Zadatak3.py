@@ -24,7 +24,6 @@ def fun(list_p):
     for dic in list_p:
         assert isinstance(dic, dict)
     assert all(key in dic.keys() for dic in list_p for key in dic.keys())
-    new_dic = {}
     for dic in list_p:
         return {"ukupno" : {"artikli": [dic["naziv"] for dic in list_p], "cijena" : sum([dic["kolicina"] * dic["cijena"] for dic in list_p])}}
 print(fun(artikli))
