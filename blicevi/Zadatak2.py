@@ -5,6 +5,7 @@ d2 = {"valute" : ["EUR", "USD", "CZK", "Error"], "cijena" : [7.5, 7.7, 0.3, 5.5]
 def fun(dic1, dic2):
     assert isinstance(dic1, dict)
     assert isinstance(dic2, dict)
-    return (x for x,y in )
-
+    for lis in dic1:
+        assert isinstance(lis, list)
+    assert all(key in dic1.keys() for dic1 in dic1 for key in dic.keys()) 
 print(fun(d1,d2))
