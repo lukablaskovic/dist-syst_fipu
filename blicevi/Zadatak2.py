@@ -7,5 +7,5 @@ def fun(dic1, dic2):
     assert isinstance(dic2, dict)
     for lis in dic1:
         assert isinstance(lis, list)
-    assert all(key in dic1.keys() for dic1 in dic1 for key in dic.keys()) 
+    assert all(key in dic1.keys() for dic1 in dic1 for key in dic1.keys()) 
 print(fun(d1,d2))
