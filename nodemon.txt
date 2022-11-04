@@ -1,0 +1,1 @@
+nodemon -e py -x python file_name.py
