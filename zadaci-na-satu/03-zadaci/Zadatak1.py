@@ -8,7 +8,7 @@ listu dictionary-a u kojem se nalaze artikli.
 
 Druga funkcija prima listu dictionary-a artikala, te svakom artiklu dodaje
 random cijenu u range-u od 1 do 10. Prvo provjeri radi li se o listi, te jesu
-li svi njeni elementi dictionary. Funkcija main poziva obije funkcije, te
+li svi njeni elementi dictionary. Funkcija main poziva obje funkcije, te
 njenim zavrsetkom zavrsava i program.
 """
 import asyncio
