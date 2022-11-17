@@ -9,29 +9,60 @@ import asyncio
 import time
 
 from aiohttp import web
-import json
 
 routes = web.RouteTableDef()
-activities = []
 
 @routes.get("/getActivity")
 async def get_activity(req):
     try:
+        t_end = time.time() + 30
+    
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
-            activites = []
-            t_end = time.time() + 30
+            #Radi 30 sekundi
             while time.time() < t_end:
                 print("Starting...")
-                for r in range(8):
-                    activities.append(asyncio.create_task(session.get("https://www.boredapi.com/api/activity")))
-                    print("Sending request - ", r)
-                res = await asyncio.gather(*activities)
-                res = [await x.json() for x in res]
-                time.sleep(6)
-            print(activites)
-        return web.json_response({"status" : "OK", "message" : res}, status=200)
+                #Šalji zahtjeve 5 puta
+                for c in range(5):
+                    print("Cycle {} starting...".format(c+1))
+
+                    #Posalji 8 zahtjeva i spremi ih
+                    activities = []
+                    #Send 8 requests
+                    task = asyncio.create_task(sendRequests(activities, session))
+                    #Awaits 8 requests sends to finish
+                    activities = await task
+                    #Gather and unpack data from task results
+                    res = await asyncio.gather(*activities)
+                    json_data = [await x.json() for x in res]
+                        
+                    print(json_data)
+                    print("len(res): ", len(json_data))
+                        
+                    #Send json_data to parser
+                    
+                    task = asyncio.create_task(sendToParser(json_data, session))
+                    await asyncio.gather(task)
+                    print("Cycle {} finished".format(c+1))
+                    time.sleep(6)
+                break
+
+        return web.json_response({"status" : "OK"}, status=200)
     except Exception as e:
-        return web.json_response({"failed" : str(e)}, status=500) 
+        return web.json_response({"failed" : str(e)}, status=500)
+
+#Send requests to bored api
+async def sendRequests(activities, session):
+    for a in range(8):
+        activities.append(asyncio.create_task(session.get("https://www.boredapi.com/api/activity")))
+        print("Sending request - ", a)
+    return activities
+        
+#Send requests to Service2 parser
+async def sendToParser(json_activities, session):
+    for i in range(len(json_activities)):
+        asyncio.create_task(session.post("http://0.0.0.0:8083/parseActivities", json=json_activities[i]))
+        print("Sending to parser - ", i)
+    pass
 
 app = web.Application()
 
