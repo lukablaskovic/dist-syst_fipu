@@ -14,40 +14,31 @@ import time
 from aiohttp import web
 
 routes = web.RouteTableDef()
-received_activities = []
-
-charity = []
-recreational = []
-other = []
 
 @routes.post("/parseActivities")
 async def parseActivities(req):
     try:
+        received_activity = []
         json_data = await req.json()
-        received_activities.append(json_data)
-        
-        #Filter and group activities by type
-        charity = [activity for activity in received_activities if activity["type"] == "charity"]
-        recreational = [activity for activity in received_activities if activity["type"] == "recreational"]
-        other = [activity for activity in received_activities if activity["type"] != "recreational" and activity["type"] != "charity"]
-        
-        received_activities = []
+        received_activity = json_data
+        received_activity_type = received_activity.get("type")
 
-        print("charity:", charity)
-
-        print("recreational:", recreational)
-
-        print("other:", other)
-
+        #Filter and group activities by type and send requests to Service3
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
-            for i in range(len(other)):
-                asyncio.create_task(session.post("http://0.0.0.0:8085/", json = other[i]))
+            match received_activity_type:
 
-        return web.json_response({"status" : "OK"}, status=200)        
+                case "recreational" | "charity":
+                    print("recreational|charity: ", received_activity)
+                    async with session.post("http://192.168.5.11:8085/charity-recreational", json = received_activity) as resp:
+                        service3_res = await resp.text()
+                case _:
+                    print("other: ", received_activity)
+                    async with session.post("http://192.168.5.11:8085/other-activities", json = received_activity) as resp:
+                        service3_res = await resp.text()
+
+        return web.json_response({"Status S2" : "OK"}, status=200)        
     except Exception as e:
-        return web.json_response({"failed" : str(e)}, status=500)         
-
-
+        return web.json_response({"Status S2" : service3_res}, status=500)    
 
 app = web.Application()
 

@@ -41,28 +41,29 @@ async def get_activity(req):
                     #Send json_data to parser
                     
                     task = asyncio.create_task(sendToParser(json_data, session))
-                    await asyncio.gather(task)
+                    service2_response = await task
                     print("Cycle {} finished".format(c+1))
                     time.sleep(6)
                 break
 
-        return web.json_response({"status" : "OK"}, status=200)
+        return web.json_response({"Status S1" : "OK"}, status=200)
     except Exception as e:
-        return web.json_response({"failed" : str(e)}, status=500)
+        return web.json_response({"Status S1" : service2_response}, status=500)
 
 #Send requests to bored api
 async def sendRequests(activities, session):
     for a in range(8):
         activities.append(asyncio.create_task(session.get("https://www.boredapi.com/api/activity")))
-        print("Sending request - ", a)
+        #print("Sending request - ", a)
     return activities
         
 #Send requests to Service2 parser
 async def sendToParser(json_activities, session):
     for i in range(len(json_activities)):
-        asyncio.create_task(session.post("http://0.0.0.0:8083/parseActivities", json=json_activities[i]))
-        print("Sending to parser - ", i)
-    pass
+        async with session.post("http://0.0.0.0:8083/parseActivities", json=json_activities[i]) as resp:
+            print("Sending to parser - ", i)
+            service2_response = resp.text()
+    return service2_response
 
 app = web.Application()
 
