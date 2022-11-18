@@ -17,29 +17,54 @@ from aiohttp import web
 
 routes = web.RouteTableDef()
 
-@routes.post("/charityAndRecreational")
-async def parseCharRec(req):
-    pass
+temp_activities_storage = []
 
-@routes.post("/otherActivities")
+@routes.post("/charity-recreational")
+async def parseCharRec(req):
+    try:
+        json_data = await req.json()
+        print("ROUTE: charity-recreational")
+        new_activity = json_data
+        temp_activities_storage.append(new_activity)
+        
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
+                task = asyncio.create_task(sendRequest(session))
+                user_json = await task
+                new_activity["latitude"] = user_json["results"][0]["location"]["coordinates"]["latitude"]
+                new_activity["longitude"] = user_json["results"][0]["location"]["coordinates"]["longitude"]
+                print(new_activity)
+                
+        return web.json_response({"status" : "success"}, status=200)
+    except Exception as e:
+        web.json_response({"failed" : str(e)}, status = 500)
+
+@routes.post("/other-activities")
 async def parseOther(req):
-    json_data = await req.json()
-    print(json_data)
-    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
-            task = asyncio.create_task(sendRequest(json_data, session))
-            users = await task
-            print(users)
-    pass
+    try:
+        json_data = await req.json()
+        print("ROUTE: other-activities")
+        new_activity = json_data
+        temp_activities_storage.append(new_activity)
+        
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
+                task = asyncio.create_task(sendRequest(session))
+                user_json = await task
+                new_activity["ime"] = user_json["results"][0]["name"]["first"]
+                new_activity["prezime"] = user_json["results"][0]["name"]["last"]
+                new_activity["datum_rodenja"] = user_json["results"][0]["dob"]["date"][:10]
+                print(new_activity)
+                
+        return web.json_response({"success" : "OK"}, status=200)
+    except Exception as e:
+        web.json_response({"failed" : str(e)}, status = 500)
+
 
 #Send request to randomuser.me api
-async def sendRequest(activities, session):
-    random_users = []
-    for a in range(len(activities)):
-        random_users.append(asyncio.create_task(session.get("https://randomuser.me/api/")))
-        print("ran - req sent! - ", a)
-    res = await asyncio.gather(*random_users)
-    res = [await x.json() for x in res]
-    return res
+async def sendRequest(session):
+    random_user = asyncio.create_task(session.get("https://randomuser.me/api/"))
+    res = await random_user
+    user_json = await res.json()
+    return user_json
 
 app = web.Application()
 
