@@ -54,9 +54,9 @@ async def parseOther(req):
                 new_activity["datum_rodenja"] = user_json["results"][0]["dob"]["date"][:10]
                 print(new_activity)
                 
-        return web.json_response({"success" : "OK"}, status=200)
+        return web.json_response({"Status S3" : "OK"}, status=200)
     except Exception as e:
-        web.json_response({"failed" : str(e)}, status = 500)
+        web.json_response({"Status S3" : str(e)}, status = 500)
 
 
 #Send request to randomuser.me api

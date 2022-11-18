@@ -29,11 +29,11 @@ async def parseActivities(req):
 
                 case "recreational" | "charity":
                     print("recreational|charity: ", received_activity)
-                    async with session.post("http://192.168.5.11:8085/charity-recreational", json = received_activity) as resp:
+                    async with session.post("http://0.0.0.0:8085/charity-recreational", json = received_activity) as resp:
                         service3_res = await resp.text()
                 case _:
                     print("other: ", received_activity)
-                    async with session.post("http://192.168.5.11:8085/other-activities", json = received_activity) as resp:
+                    async with session.post("http://0.0.0.0:8085/other-activities", json = received_activity) as resp:
                         service3_res = await resp.text()
 
         return web.json_response({"Status S2" : "OK"}, status=200)        
