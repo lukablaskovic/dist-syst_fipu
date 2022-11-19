@@ -62,7 +62,7 @@ async def sendToParser(json_activities, session):
     for i in range(len(json_activities)):
         async with session.post("http://0.0.0.0:8083/parseActivities", json=json_activities[i]) as resp:
             print("Sending to parser - ", i)
-            service2_response = resp.text()
+            service2_response = await resp.text()
     return service2_response
 
 app = web.Application()
