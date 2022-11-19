@@ -7,7 +7,7 @@ routes = web.RouteTableDef()
 @routes.get("/artikli")
 async def get_artikli_db(request):
     res = []
-    async with aiosqlite.connect("vjezbe/14.11/test.db") as db:
+    async with aiosqlite.connect("zadaci/05-zadaci/test.db") as db:
         async with db.execute("SELECT * FROM artikl") as cur:
             async for row in cur:
                 res.append(row)
@@ -18,7 +18,7 @@ async def get_artikli_db(request):
 @routes.post("/artikl")
 async def post_artikl_db(request):
     req = await request.json()
-    async with aiosqlite.connect("vjezbe/14.11/test.db") as db:
+    async with aiosqlite.connect("zadaci/05-zadaci/test.db") as db:
         await db.execute("INSERT INTO artikl (ime,cijena) VALUES (?,?)", (req["ime"], req["cijena"]))
         await db.commit()
     return web.json_response({"status": "ok"}, status=200)
