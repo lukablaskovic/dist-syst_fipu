@@ -15,30 +15,26 @@ async def getJokes(req):
 
                 #Send 8 requests and gather results
                 task1 = asyncio.create_task(sendRequests1(activities, session))
-                
                 #SERVICE2
                 activities1 = await task1
                 res = await asyncio.gather(*activities1)
                 json_data = [await x.json(content_type=None) for x in res]
-
                 #Send json_data to parser1
                 task1 = asyncio.create_task(sendToParser1(json_data, session))
                 service2_response = await task1
 
+                json_data = []
+                activities = []
+
                 #SERVICE3
                 task2 = asyncio.create_task(sendRequests2(activities, session))
                 activities2 = await task2
+                res = await asyncio.gather(*activities2)
                 json_data2 = [await x.json(content_type=None) for x in res]
-
                 #Send json_data to parser2
-                task2 = asyncio.create_task(sendToParser2(json_data, session))
+                task2 = asyncio.create_task(sendToParser2(json_data2, session))
                 service3_response = await task2
                 
-                """
-                res2 = await asyncio.gather(*activities2)
-                json_data2 = [await x.json(content_type='text/html') for x in res2]
-                print(json_data2)
-                """
         return web.json_response({"Status S1" : "OK"}, status=200)
     except Exception as e:
         return web.json_response({"Status S1" : str(e)}, status=500)

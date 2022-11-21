@@ -16,11 +16,22 @@ async def storeData(request):
     received_activity_type = data["data"].keys()
 
     try:
-        async with aiosqlite.connect("activities.db") as db:
+        async with aiosqlite.connect("blicevi/21.11/blicevi.db") as db:
             match received_activity_type:
                 case "user":
                     print("user")
                     users.append(data)
+                    if len(jokes) > 0:
+                        await db.execute("INSERT INTO db (name,city,username,setup,punchline) VALUES (?,?,?,?,?)", 
+                            (users[0]["data"]["user"]["name"], 
+                            users[0]["user"]["user"]["city"],
+                            users["user"]["username"],
+                            jokes[0]["jokes"]["setup"],
+                            jokes[0]["jokes"]["punchline"]))
+                        users = []
+                        jokes = []
+                        db.commit()
+                        await db.execute("SELECT * FROM db")
                 case "joke":
                     print("joke")
                     jokes.append(data)

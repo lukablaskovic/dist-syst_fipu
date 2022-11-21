@@ -17,6 +17,7 @@ async def filterUser(req):
 
         new_json = {"data" : {"user" : {"name" : first_name + " " + last_name, "city" : city, "username" : username}}}
         print("user:", new_json)
+        
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
             async with session.post("http://0.0.0.0:8085/storeData", json = new_json) as resp:
                 service4_res = await resp.text()
