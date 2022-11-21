@@ -54,7 +54,7 @@ async def get_activity(req):
 async def sendRequests(activities, session):
     for a in range(8):
         activities.append(asyncio.create_task(session.get("https://www.boredapi.com/api/activity")))
-        #print("Sending request - ", a)
+        print("Sending request - ", a)
     return activities
         
 #Send requests to Service2 parser
