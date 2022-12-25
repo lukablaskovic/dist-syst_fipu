@@ -19,10 +19,11 @@ async def getGithubLinks(req):
             async with db.execute("SELECT COUNT(1) WHERE EXISTS (SELECT * FROM data)") as cur:
                 async for row in cur:
                     if tableIsEmpty(row[0]):
+                        print("Database is empty. Filling up...")
                         await fillDB()
+                        data = await fetchRandomRows(db)
                     else:
                         data = await fetchRandomRows(db)
-                        print(data)
 
         return web.json_response({"M0": "OK", "payload": data}, status=200)
     except Exception as e:
@@ -56,12 +57,11 @@ async def fillDB():
     df = pd.read_json('/Users/lukablaskovic/Desktop/data.json', lines=True)
     async with aiosqlite.connect("projekti/projekt01/data.db") as db:
         for index, row in df.head(10000).iterrows():
-            username = row["repo_name"]
+            username = row["repo_name"].split("/")[0]
             ghlink = "https://github.com/{repository}".format(
                 repository=row["repo_name"])
-            filename = row["path"].split("/")[-1]
-            print(row["repo_name"])
-            await db.execute("INSERT INTO data (username, ghlink, filename) VALUES (?,?, ?)", (username, ghlink, filename))
+            file_name = row["path"].split("/")[-1]
+            await db.execute("INSERT INTO data (username, ghlink, file_name) VALUES (?, ?, ?)", (username, ghlink, file_name))
             await db.commit()
     pass
 
