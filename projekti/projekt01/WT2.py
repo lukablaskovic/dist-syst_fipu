@@ -11,7 +11,10 @@ routes = web.RouteTableDef()
 async def processData(req):
     try:
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
-
+            data = await req.json()
+            usernames_d = [
+                element for element in data if element["username"].lower().startswith('d')]
+            print(usernames_d)
             return web.json_response({"WT2": "OK"}, status=200)
     except Exception as e:
         return web.json_response({"WT2": str(e)}, status=500)
