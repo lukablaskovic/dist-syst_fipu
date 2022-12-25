@@ -19,13 +19,13 @@ async def getGithubLinks(req):
             async with db.execute("SELECT COUNT(1) WHERE EXISTS (SELECT * FROM data)") as cur:
                 async for row in cur:
                     if tableIsEmpty(row[0]):
-                        print("Database is empty. Filling up...")
+                        print("Database is empty. Filling up... ⚠️")
                         await fillDB()
                         data = await fetchRandomRows(db)
                     else:
                         data = await fetchRandomRows(db)
 
-        return web.json_response({"M0": "OK", "payload": data}, status=200)
+        return web.json_response({"M0": "OK", "response": data}, status=200)
     except Exception as e:
         return web.json_response({"M0": str(e)}, status=500)
 
@@ -42,9 +42,6 @@ async def fetchRandomRows(conn):
 
     # Generate a list of 100 random row indices
     row_indices = np.random.randint(0, total_rows, size=100)
-
-    print(row_indices)
-
     # Fetch the rows with the randomly selected indices
     rows = []
     for row_index in row_indices:
@@ -61,8 +58,14 @@ async def fillDB():
             ghlink = "https://github.com/{repository}".format(
                 repository=row["repo_name"])
             file_name = row["path"].split("/")[-1]
-            await db.execute("INSERT INTO data (username, ghlink, file_name) VALUES (?, ?, ?)", (username, ghlink, file_name))
-            await db.commit()
+            content = row["content"]
+
+            try:
+                await db.execute("INSERT INTO data (username, ghlink, file_name, content) VALUES (?, ?, ?, ?)", (username, ghlink, file_name, content))
+                await db.commit()
+            except Exception as e:
+                print("An error has occured when inserting into database: ", e)
+        print("Successfuly added files to database! ✅")
     pass
 
 app = web.Application()
