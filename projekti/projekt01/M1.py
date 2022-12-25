@@ -14,7 +14,7 @@ async def fetchData(req):
             data = []
             # Send request to M0, receive 100 random rows
             data.append(asyncio.create_task(
-                session.get("ttp://0.0.0.0:1000/github-links")))
+                session.get("http://0.0.0.0:1000/github-links")))
             res = await asyncio.gather(*data)
             response_data = await res[0].json()
             dict_data = [{'id': l[0], 'username': l[1],  'ghlink': l[2],
