@@ -13,8 +13,7 @@ async def processData(req):
             response = ""
             if record["username"].lower().startswith('w'):
                 print("Found username starting with 'w' ✅")
-                code = record["content"]
-                response = await sendToM4(code)
+                response = await sendToM4(record)
             return web.json_response({"WT1": "OK", "response": response}, status=200)
     except Exception as e:
         return web.json_response({"WT1": str(e)}, status=500)

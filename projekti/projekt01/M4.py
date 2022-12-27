@@ -12,12 +12,31 @@ received_code = []
 @ routes.post("/gatherData")
 async def gatherData(req):
     try:
-        code = await req.json()
+        record = await req.json()
         print("Code received and stored! ✅")
-        received_code.append(code)
+        code = record["content"]
+        username = record["username"]
+        received_code.append({"username": username, "code": code})
+
+        if len(received_code) > 10:
+            await saveToFiles()
+
         return web.json_response({"M41": "OK"}, status=200)
     except Exception as e:
         return web.json_response({"M41": str(e)}, status=500)
+
+
+async def saveToFiles():
+    print("Started saving files... 📂")
+    try:
+        for item in received_code:
+            async with aiofiles.open('projekti/projekt01/files/{username}.txt'.format(username=item["username"]), 'w') as f:
+                await f.write(item["code"])
+        received_code.clear()
+        print("Files successfuly saved and list cleaned! 📁")
+    except Exception as e:
+        print(e)
+    pass
 
 app = web.Application()
 
