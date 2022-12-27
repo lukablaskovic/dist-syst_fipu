@@ -1,8 +1,11 @@
 import aiohttp
 
+import asyncio
 from aiohttp import web
 
 routes = web.RouteTableDef()
+
+print("WT2 running...")
 
 
 @ routes.post("/process-data")
@@ -11,12 +14,12 @@ async def processData(req):
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
             record = await req.json()
             response = ""
-            if record["username"].lower().startswith('w'):
-                print("Found username starting with 'w' ✅")
+            if record["username"].lower().startswith('d'):
+                print("Found username starting with 'd' ✅")
                 response = await sendToM4(record)
-            return web.json_response({"WT1": "OK", "response": response}, status=200)
+            return web.json_response({"WT2": "OK", "response": response}, status=200)
     except Exception as e:
-        return web.json_response({"WT1": str(e)}, status=500)
+        return web.json_response({"WT2": str(e)}, status=500)
 
 
 # Send requests to M4.py
@@ -30,4 +33,4 @@ app = web.Application()
 
 app.router.add_routes(routes)
 
-web.run_app(app, port=1101)
+web.run_app(app, port=1102)

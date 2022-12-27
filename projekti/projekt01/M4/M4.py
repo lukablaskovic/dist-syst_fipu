@@ -1,12 +1,13 @@
-import aiohttp
-import aiosqlite
-import asyncio
 import aiofiles
+import aiohttp
+import asyncio
 from aiohttp import web
 
 routes = web.RouteTableDef()
 
 received_code = []
+
+print("M4 running...")
 
 
 @ routes.post("/gatherData")

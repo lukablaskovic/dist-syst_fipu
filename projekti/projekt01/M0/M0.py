@@ -9,6 +9,8 @@ from aiohttp import web
 
 routes = web.RouteTableDef()
 
+print("M0 running...")
+
 
 @ routes.get("/github-links")
 async def getGithubLinks(req):

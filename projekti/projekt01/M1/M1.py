@@ -1,10 +1,11 @@
 import aiohttp
-import aiosqlite
 import asyncio
 
 from aiohttp import web
 
 routes = web.RouteTableDef()
+
+print("M1 running...")
 
 
 @ routes.get("/data")
