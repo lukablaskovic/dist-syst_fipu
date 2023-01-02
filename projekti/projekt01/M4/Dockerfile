@@ -3,7 +3,7 @@ FROM python:3.10
 # Install dependencies
 RUN pip install aiofiles aiohttp
 
-# Copy the script into the container
+# Copy the python script into the container
 COPY M4.py /app/M4.py
 
 ENV PYTHONUNBUFFERED=1

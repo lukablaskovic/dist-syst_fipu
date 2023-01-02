@@ -1,9 +1,9 @@
 FROM python:3.10
 
 # Install dependencies
-RUN pip install aiohttp asyncio
+RUN pip install aiohttp asyncio gitpython
 
-# Copy the script into the container
+# Copy the python script into the container
 COPY M1.py /app/M1.py
 
 ENV PYTHONUNBUFFERED=1

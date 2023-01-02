@@ -50,6 +50,7 @@ async def fetchRandomRows(conn):
     for row_index in row_indices:
         await cursor.execute("SELECT * FROM data LIMIT 1 OFFSET {row_index}".format(row_index=row_index))
         rows.append(await cursor.fetchone())
+    # Returns a list containing 100 rows
     return rows
 
 
