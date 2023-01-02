@@ -6,5 +6,8 @@ Data: https://huggingface.co/datasets/codeparrot/codeparrot-clean/resolve/main/f
 
 Docker files available at: https://hub.docker.com/repositories/lukablaskovic. 
 
-Database not stored on GIT
+Database not stored on GIT. 
  
+To start the application, run M1 Service using one of the following API calls: 
+- localhost:1001/start 
+- localhost:1001/start2  (M1+)
