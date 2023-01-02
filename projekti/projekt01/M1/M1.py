@@ -1,4 +1,6 @@
 from git import Repo
+import git
+import git.exc as ge
 import aiohttp
 import asyncio
 
@@ -19,6 +21,10 @@ async def fetchData(req):
                 session.get("http://m0:1000/github-links")))
             res = await asyncio.gather(*data)
             response_data = await res[0].json()
+
+            for row in response_data["response"]:
+                print("row:", row[2])
+
             dict_data = [{'id': row[0], 'username': row[1],  'ghlink': row[2],
                           'filename': row[3], 'content': row[2]} for row in response_data["response"]]
             w1_resp = await send_to_wt("http://wt1:1101/process-data", dict_data)
@@ -44,7 +50,7 @@ async def fetchData2(req):
 
             for element in dict_data:
                 print("content: ", element["content"])
-
+            print("Repository contents successfully retrieved! ✅")
             w1_resp = await send_to_wt("http://wt1:1101/process-data", dict_data)
             w2_resp = await send_to_wt("http://wt2:1102/process-data", dict_data)
 
@@ -56,8 +62,17 @@ app = web.Application()
 
 
 async def fetch_repository(repo):
-    repository = Repo.clone_from(repo, "repo")
-    content = await repository.git.fetch()
+
+    loop = asyncio.get_event_loop()
+    # Clone the repository using the Repo.clone_from method
+    repository = await loop.run_in_executor(None, Repo.clone_from, repo, "repo")
+    # Get the contents of the repository's root directory
+    tree = repository.head.commit.tree
+    # Iterate over the tree and read the contents of each file
+    content = ""
+    for blob in tree.traverse():
+        if blob.type == "blob":
+            content += await loop.run_in_executor(None, blob.data_stream.read)
     return content
 
 
