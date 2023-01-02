@@ -25,7 +25,7 @@ async def processData(req):
 # Send requests to M4.py
 async def sendToM4(data):
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
-        async with session.post("http://0.0.0.0:1200/gatherData", json=data) as resp:
+        async with session.post("http://m4:1200/gatherData", json=data) as resp:
             m4_resp = await resp.text()
     return m4_resp
 

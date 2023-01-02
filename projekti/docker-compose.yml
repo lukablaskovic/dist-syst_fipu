@@ -1,0 +1,33 @@
+version: "3"
+services:
+  m0:
+    build: M0
+    command: ["python", "/app/M0.py"]
+    ports:
+      - "1000:1000"
+    volumes:
+      - /Users/lukablaskovic/Desktop/data.json:/app/data
+
+  m1:
+    build: M1
+    command: ["python", "/app/M1.py"]
+    ports:
+      - "1001:1001"
+
+  m4:
+    build: M4
+    command: ["python", "/app/M4.py"]
+    ports:
+      - "1200:1200"
+
+  wt1:
+    build: WT1
+    command: ["python", "/app/WT1.py"]
+    ports:
+      - "1101:1101"
+
+  wt2:
+    build: WT2
+    command: ["python", "/app/WT2.py"]
+    ports:
+      - "1102:1102"

@@ -15,13 +15,13 @@ async def fetchData(req):
             data = []
             # Send request to M0, receive 100 random rows
             data.append(asyncio.create_task(
-                session.get("http://0.0.0.0:1000/github-links")))
+                session.get("http://m0:1000/github-links")))
             res = await asyncio.gather(*data)
             response_data = await res[0].json()
             dict_data = [{'id': l[0], 'username': l[1],  'ghlink': l[2],
                           'filename': l[3], 'content': l[4]} for l in response_data["response"]]
-            w1_resp = await send_to_wt("http://0.0.0.0:1101/process-data", dict_data)
-            w2_resp = await send_to_wt("http://0.0.0.0:1102/process-data", dict_data)
+            w1_resp = await send_to_wt("http://wt1:1101/process-data", dict_data)
+            w2_resp = await send_to_wt("http://wt2:1102/process-data", dict_data)
 
             return web.json_response({"M1": "OK", "response": [w1_resp, w2_resp]}, status=200)
     except Exception as e:

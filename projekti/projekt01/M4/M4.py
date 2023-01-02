@@ -31,7 +31,7 @@ async def saveToFiles():
     print("Started saving files... 📂")
     try:
         for item in received_code:
-            async with aiofiles.open('projekti/projekt01/files/{username}.txt'.format(username=item["username"]), 'w') as f:
+            async with aiofiles.open('./files/{username}.txt'.format(username=item["username"]), 'w') as f:
                 await f.write(item["code"])
         received_code.clear()
         print("Files successfuly saved and list cleaned! 📁")
