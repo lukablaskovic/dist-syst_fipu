@@ -8,7 +8,7 @@ with open("abi.json", "r") as file:
 
 # Dobiveno preko https://remix.ethereum.org/
 # Potrebno je:
-# - instalirati vyper ekstenyiju,
+# - instalirati vyper ekstenziju,
 # - stvoriti novi file (github.vy) i u njega kopirati kod iz smart-contract.py
 # - compile-anje koda, natrag vraca ABI.json i adresu
 # Deployanje koda putem https://remix.ethereum.org/

@@ -1,3 +1,5 @@
+
+#pip install vyper
 struct Entry:
     id: int128
     username: String[100]
