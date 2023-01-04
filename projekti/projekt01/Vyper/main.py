@@ -10,8 +10,9 @@ with open("abi.json", "r") as file:
 # Potrebno je:
 # - instalirati vyper ekstenyiju,
 # - stvoriti novi file (github.vy) i u njega kopirati kod iz smart-contract.py
-# - comiple-at kod te dobivenu adresu i ABI koristiti za pozivanje add_entry funkcije
-SC_address = "0x5B38Da6a701c568545dCfcB03FcB875f56beddC4"
+# - compile-anje koda, natrag vraca ABI.json i adresu
+# Deployanje koda putem https://remix.ethereum.org/
+SC_address = "0xd9145CCE52D386f254917e481eB44e9943F39138"
 
 w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:7545"))
 
@@ -24,5 +25,19 @@ else:
 # First, we need to get a reference to the contract instance
 # Then, we can call any of the contract's functions
 contract = w3.eth.contract(abi=abi, address=SC_address)
-result = contract.functions.add_entry(
-    "lukablaskovic", "https://github.com/lukablaskovic/dist-syst").call()
+
+# Function for calling add_entry method from smart contract
+
+
+def add_entry(username, github_link, filename):
+    result = contract.functions.add_entry(
+        username, github_link, filename).call()
+    return result
+
+# Function for calling get_entry method from smart contract
+
+
+def get_entry(entry_id):
+    result = contract.functions.get_entry(
+        entry_id).call()
+    return result
