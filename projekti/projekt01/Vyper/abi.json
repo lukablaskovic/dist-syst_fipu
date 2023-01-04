@@ -1,0 +1,33 @@
+[
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "name": "add_entry",
+    "inputs": [
+      { "name": "_username", "type": "string" },
+      { "name": "_github_link", "type": "string" }
+    ],
+    "outputs": [],
+    "gas": 534963
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "name": "get_entry",
+    "inputs": [{ "name": "entry_id", "type": "int128" }],
+    "outputs": [
+      { "name": "id", "type": "int128" },
+      { "name": "username", "type": "string" },
+      { "name": "github_link", "type": "string" }
+    ],
+    "gas": 43777
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "entry_count",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "int128" }],
+    "gas": 2448
+  }
+]
