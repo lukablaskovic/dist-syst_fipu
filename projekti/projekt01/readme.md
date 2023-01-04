@@ -1,13 +1,14 @@
 # DIST-SYSTEMS
 
 ## Project 1
+### Luka Blašković, FIPU
 
 Podaci: https://huggingface.co/datasets/codeparrot/codeparrot-clean/resolve/main/file-000000000040.json.gz. 
 
 Docker slike dostupne javno na: https://hub.docker.com/repositories/lukablaskovic. 
 
 Dodan je i docker-compose file koji spaja sve servise.
-Potrebno je ući u projekti/projekt0 direktorij i pozvati docker-compose up. Nakon toga će se svi servisi pokrenuti skupa.
+Potrebno je ući u projekti/projekt0 direktorij i pozvati **docker-compose up**. Nakon toga će se svi servisi pokrenuti skupa.
 
 Servisi su namješteni da se pokreću preko dockera.
 - kod API calleva umjesto localhosta imaju naziv servisa, za međusobno pozivanje
@@ -20,7 +21,9 @@ Sadrži stupce:
  
 Za pokretanje aplikacije, pokrenite M1 uslugu pomoću jednog od sljedećih API poziva:
 - localhost:1001/start 
-- localhost:1001/start2  (M1+)
+- localhost:1001/start2  (M1+) (Spor je, dohvaća 10 000 fileova koristeći GitPython)
+
+![Terminal screenshot](https://iili.io/HRFp0Rs.png)
 
 
 ### Vyper - smart contract dio
@@ -32,3 +35,5 @@ Potrebno je:
 - stvoriti novi file (github.vy) i u njega kopirati kod iz smart-contract.py
 - compile-anje koda, natrag vraca ABI.json i adresu
 Deployanje koda putem https://remix.ethereum.org/
+
+![Remix screenshot](https://iili.io/HRKnQxS.png)
