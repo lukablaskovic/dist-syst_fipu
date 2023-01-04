@@ -23,7 +23,6 @@ async def getGithubLinks(req):
                     if tableIsEmpty(row[0]):
                         print("Database is empty. Filling up... ⚠️")
                         await fillDB()
-                        print("Database filled successfuly!")
                         data = await fetchRandomRows(db)
                     else:
                         data = await fetchRandomRows(db)
@@ -65,7 +64,7 @@ async def fillDB():
                     repository=row["repo_name"])
                 file_name = row["path"].split("/")[-1]
                 content = row["content"]
-
+                print("Added row [{i}]".format(i=index))
                 try:
                     await db.execute("INSERT INTO data (username, ghlink, file_name, content) VALUES (?, ?, ?, ?)", (username, ghlink, file_name, content))
                     await db.commit()

@@ -22,16 +22,16 @@ async def gatherData(req):
         if len(received_code) > 10:
             await saveToFiles()
 
-        return web.json_response({"M41": "OK"}, status=200)
+        return web.json_response({"M4": "OK"}, status=200)
     except Exception as e:
-        return web.json_response({"M41": str(e)}, status=500)
+        return web.json_response({"M4": str(e)}, status=500)
 
 
 async def saveToFiles():
     print("Started saving files... 📂")
     try:
         for item in received_code:
-            async with aiofiles.open('./files/{username}.txt'.format(username=item["username"]), 'w') as f:
+            async with aiofiles.open('app/files/{username}.txt'.format(username=item["username"]), 'w') as f:
                 await f.write(item["code"])
         received_code.clear()
         print("Files successfuly saved and list cleaned! 📁")

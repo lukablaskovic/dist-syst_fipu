@@ -1,8 +1,9 @@
 from git import Repo
-import git
 import git.exc as ge
 import aiohttp
 import asyncio
+import os
+import shutil
 
 from aiohttp import web
 
@@ -11,6 +12,8 @@ routes = web.RouteTableDef()
 print("M1 running...")
 
 
+# M1 start route
+# Call using http://localhost:1000/start
 @ routes.get("/start")
 async def fetchData(req):
     try:
@@ -22,9 +25,6 @@ async def fetchData(req):
             res = await asyncio.gather(*data)
             response_data = await res[0].json()
 
-            for row in response_data["response"]:
-                print("row:", row[2])
-
             dict_data = [{'id': row[0], 'username': row[1],  'ghlink': row[2],
                           'filename': row[3], 'content': row[2]} for row in response_data["response"]]
             w1_resp = await send_to_wt("http://wt1:1101/process-data", dict_data)
@@ -35,6 +35,7 @@ async def fetchData(req):
         return web.json_response({"M1": str(e)}, status=500)
 
 
+# M1+, fetching content from repositories using GitPython. It works, but it's very slow
 @ routes.get("/start2")
 async def fetchData2(req):
     try:
@@ -45,12 +46,16 @@ async def fetchData2(req):
                 session.get("http://m0:1000/github-links")))
             res = await asyncio.gather(*data)
             response_data = await res[0].json()
+            content = []
+            # Fetch repositories contents concurrently
+            for row in response_data["response"]:
+                task = asyncio.create_task(fetch_repository(row[2], row[3]))
+                content.append(task)
+            results = await asyncio.gather(*content)
             dict_data = [{'id': row[0], 'username': row[1],  'ghlink': row[2],
-                          'filename': row[3], 'content': await fetch_repository(row[4])} for row in response_data["response"]]
+                          'filename': row[3], 'content': result} for row, result in zip(response_data["response"], results)]
 
-            for element in dict_data:
-                print("content: ", element["content"])
-            print("Repository contents successfully retrieved! ✅")
+            print("All repository contents successfully retrieved! ✅")
             w1_resp = await send_to_wt("http://wt1:1101/process-data", dict_data)
             w2_resp = await send_to_wt("http://wt2:1102/process-data", dict_data)
 
@@ -58,24 +63,43 @@ async def fetchData2(req):
     except Exception as e:
         return web.json_response({"M1": str(e)}, status=500)
 
+
 app = web.Application()
 
 
-async def fetch_repository(repo):
+# Fetch content from repositories
+async def fetch_repository(repo, filename):
+    # Clone repository and delete local repo folder on startup if exists
+    if os.path.exists("repo"):
+        shutil.rmtree("repo")
+    repository = Repo.clone_from(repo, "repo")
 
-    loop = asyncio.get_event_loop()
-    # Clone the repository using the Repo.clone_from method
-    repository = await loop.run_in_executor(None, Repo.clone_from, repo, "repo")
-    # Get the contents of the repository's root directory
-    tree = repository.head.commit.tree
-    # Iterate over the tree and read the contents of each file
-    content = ""
-    for blob in tree.traverse():
-        if blob.type == "blob":
-            content += await loop.run_in_executor(None, blob.data_stream.read)
+    commit = repository.commit("HEAD")
+    tree = commit.tree
+
+    # Find the blob object for the file specified using BFS
+    # Sporo je ali radi, nisam znao kako napraviti brže...
+    # Koristi breadth-first search za pretraživanje stabla kod pronalaska točog .py file-a
+    queue = [(tree, filename)]
+    while queue:
+        item, name = queue.pop(0)
+        if item.type == "blob" and item.name == name:
+            blob = item
+            break
+        elif item.type == "tree":
+            for child in item.traverse():
+                queue.append((child, name))
+    else:
+        blob = None
+
+    # Retrieve content
+    if blob:
+        content = repository.git.show("{}:{}".format(commit.hexsha, blob.path))
+        print("Content successfuly retrieved! ✅")
     return content
 
 
+# Send data to WT services
 async def send_to_wt(url, data):
     for i in range(len(data)):
         print("Sending data [{i}] to WT ✔️".format(i=i))

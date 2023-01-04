@@ -14,9 +14,9 @@ async def processData(req):
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as session:
             record = await req.json()
             response = ""
-            if record["username"].lower().startswith('w'):
-                print("Found username starting with 'w' ✅")
-                response = await sendToM4(record)
+            assert record["username"].lower().startswith('w')
+            print("Found username starting with 'w' ✅")
+            response = await sendToM4(record)
             return web.json_response({"WT1": "OK", "response": response}, status=200)
     except Exception as e:
         return web.json_response({"WT1": str(e)}, status=500)
