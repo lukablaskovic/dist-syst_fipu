@@ -27,7 +27,6 @@ Za pokretanje aplikacije, pokrenite M1 uslugu pomoću jednog od sljedećih API p
 
 
 ### Vyper - smart contract dio
-Dobiveno preko https://remix.ethereum.org/
 Potrebno je:
 - instalirati i pokrenuti Ganache
 - instalirati vyper i web3 python pakete
